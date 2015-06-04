@@ -1,0 +1,2 @@
+void apisToDans();
+int racePace();
