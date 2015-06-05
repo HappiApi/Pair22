@@ -25,7 +25,7 @@ Module Usage : Accepts bearings x, where 0 < x < 360 where 0 is aligned with the
 	where Pi/2 is 1.570796 (6d.p) (as precise as can be represented as double ?)
 
 */
-#define slowThreshold 0.05 //0.05 works
+#define slowThreshold 0.3 //0.05 works
 
 #define LEFT_TURN -1
 #define RIGHT_TURN 1
@@ -79,10 +79,10 @@ void turnToDirection(int turnDirection) {
 			}
 		} else {
 			if(currentHeading() > target) {
-				set_motors(-15,15);
+				set_motors(-30,30);
 			}
 			if(currentHeading() < target) {
-				set_motors(15,-15);
+				set_motors(30,-30);
 			}
 		} 
 		calcPos();
@@ -166,8 +166,11 @@ void correctToStraight(int motorSpeed) {
 #define X 0
 #define Y 1
 
+int metTarget;
+
 void driveStraight(int XorY, int idealVal) {
 	int currentVal;
+	metTarget = 1;
 
 	if (XorY == X) 
 		currentVal = currentX();
@@ -176,9 +179,9 @@ void driveStraight(int XorY, int idealVal) {
 
 	while(fabs(currentVal-idealVal) > 1) {
 		if(fabs(currentVal-idealVal) < 15) {
-				correctToStraight(2 * fabs(currentVal-idealVal));
+				correctToStraight(3 * fabs(currentVal-idealVal));
 		} else {
-			set_motors(40,40);
+			set_motors(60,60);
 		}
 		calcPos();
 
@@ -189,9 +192,10 @@ void driveStraight(int XorY, int idealVal) {
 			currentVal = currentY();
 			// idealY = currentVal;
 		}
-		if (averageUS() < 25) {
-			break;
-		}
+		// if (averageUS() < 25) {
+		// 	metTarget = 0;
+		// 	break;
+		// }
 	}
 	set_motors(0,0);
 }
@@ -212,7 +216,9 @@ void Straight()
 		idealY += 60;
 		printf("UP TargetY: %f\n",idealY);
 		driveStraight(Y, idealY);
-		bCoord.y += 1;
+		if (metTarget == 1) {
+			bCoord.y += 1;
+		}
 	}
 
 	// Going Down
@@ -220,7 +226,9 @@ void Straight()
 		idealY -= 60;
 		printf("DOWN TargetY: %f\n",idealY);
 		driveStraight(Y, idealY);
-		bCoord.y -= 1;
+		if (metTarget == 1) {
+			bCoord.y -= 1;
+		}
 	}
 
 	// Going Right
@@ -228,7 +236,9 @@ void Straight()
 		idealX += 60;
 		printf("RIGHT TargetX: %f\n",idealX);
 		driveStraight(X, idealX);
-		bCoord.x += 1;
+		if (metTarget == 1) {
+			bCoord.x += 1;
+		}
 	}
 
 	// Going Left
@@ -236,7 +246,9 @@ void Straight()
 		idealX -= 60;
 		printf("LEFT TargetX: %f\n",idealX);
 		driveStraight(X, idealX);
-		bCoord.x -= 1;
+		if (metTarget == 1) {
+			bCoord.x -= 1;
+		}
 	}
 
 	set_motors(0,0);
@@ -261,18 +273,27 @@ int getAverage(int *values, int length) {
 		errorCount = 0;
 	}
 
+
 	count = 0;
 
 	for (i = 0; i < length; i++) {
 		if (i == outliers[count]) {
 			count++;
 		} else {
+			printf("%i, ", *(values + i));
 			result += *(values + i);
 			errorCount++;
 		}
 	}
 
-	return result / errorCount;
+
+	printf("\n");
+
+	if (errorCount != 0) {
+		return result / errorCount;
+	} else {
+		return 0;
+	}
 }
 
 int checkWall(int LorR)
@@ -286,7 +307,8 @@ int checkWall(int LorR)
 		distancesFront[i] = get_front_ir_dist(LorR);
 		usleep(10000);
 	}
-	final = (getAverage(distancesSide, noOfChecks) + getAverage(distancesFront, noOfChecks)) / 2;
+	printf("front ir: %i", getAverage(distancesFront, noOfChecks));
+	final = (getAverage(distancesSide, noOfChecks) + get_front_ir_dist(LorR)) / 2; //getAverage(distancesFront, noOfChecks)) / 2;
 	if (LorR == LEFT) {
 		printf("\nLeft");
 	} else {

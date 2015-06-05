@@ -245,7 +245,7 @@ double calcDistToPoint (path * temp) {
 /*finds the furthest coordinate ahead within a set radius (target) */
 path * findTarget () {
   path * temp = currentNode;
-  double target = 30;
+  double target = 25;
   double distToNode, closestNodeDist = 1000.0;
   
     while(1) {
@@ -307,7 +307,7 @@ void followBack() {
   double ratio = 0.03; //0.03
   while(1) {
     target = findTarget();
-    if (currentNode->position == nodePosition - 10) {
+    if (currentNode->position == nodePosition - 15) { //10 is too low
       set_motors(0,0);
       exit(0);
     }
