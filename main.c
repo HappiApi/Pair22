@@ -26,11 +26,11 @@ int main()
 	set_ir_angle(LEFT, -45); set_ir_angle(RIGHT, 45);
 	setSquareCenters();
 	initialBoxCalibration();
-	while(!state)
-	{
-		state = checkWalls();
-		calcPos();		
-	}
+// 	while(!state)
+// 	{
+// //		state = checkWalls();
+// 		calcPos();		
+	// }
 	racePace();
 	return 1;
 }

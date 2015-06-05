@@ -5,9 +5,10 @@
 #include <time.h>
 #include "picomms.h"
 #include "wallStruct.h"
+#include "position.h"
 
 #define FOLLOW_SPEED 40
-#define FOLLOW_BK_SPD 60
+#define FOLLOW_BK_SPD 80
 #define THRESHOLD_DIST 35.0
 #define MIN_TURN_RADIUS 25
 #define RIGHT_ANGLE_TICKS 210
@@ -245,7 +246,7 @@ double calcDistToPoint (path * temp) {
 /*finds the furthest coordinate ahead within a set radius (target) */
 path * findTarget () {
   path * temp = currentNode;
-  double target = 25;
+  double target = 40; // originally 30
   double distToNode, closestNodeDist = 1000.0;
   
     while(1) {
@@ -317,7 +318,7 @@ void followBack() {
     } else {
       set_motors((int)((1.0 - (ratio * -angleToTarget)) * FOLLOW_BK_SPD), FOLLOW_BK_SPD);
     }
-
+    // calcPos();
     calcPosition();
     usleep(1000);
   }
@@ -340,23 +341,33 @@ int racePace() {
 		(walls + i)->xCoord = 0;
 		(walls + i)->yCoord = 0;
 	}
-	// for (i = 0; i < 4; i++) {
-	// 	(walls + i)->xCoord = 0;
-	// 	(walls + i)->yCoord = 2*i + 1;		//sets the left side walls
-	// }
-	// for (i = 4; i < 8; i++) {
-	// 	(walls + i)->xCoord = 8;
-	// 	(walls + i)->yCoord = 2*(i-4) + 1;		//sets the right side walls
-	// }
-	// for (i = 8; i < 12; i++) {
-	// 	(walls + i)->xCoord = 2*(i-8) + 1;
-	// 	(walls + i)->yCoord = 0;		//sets the bottom walls
-	// }
-	// for (i = 12; i < 16; i++) {
-		// (walls + i)->xCoord = 2*(i-12) + 1;
-		// (walls + i)->yCoord = 8;		//sets the top walls
-	// }
-  apisToDans();
+	for (i = 0; i < 4; i++) {
+		(walls + i)->xCoord = 0;
+		(walls + i)->yCoord = 2*i + 1;		//sets the left side walls
+	}
+	for (i = 4; i < 8; i++) {
+		(walls + i)->xCoord = 8;
+		(walls + i)->yCoord = 2*(i-4) + 1;		//sets the right side walls
+	}
+	for (i = 8; i < 12; i++) {
+		(walls + i)->xCoord = 2*(i-8) + 1;
+		(walls + i)->yCoord = 0;		//sets the bottom walls
+	}
+	for (i = 12; i < 16; i++) {
+		(walls + i)->xCoord = 2*(i-12) + 1;
+		(walls + i)->yCoord = 8;		//sets the top walls
+	}
+  (walls + 16)->xCoord = 1; (walls + 16)->yCoord = 2;
+  (walls + 17)->xCoord = 2; (walls + 17)->yCoord = 5;
+  (walls + 18)->xCoord = 3; (walls + 18)->yCoord = 4;
+  (walls + 19)->xCoord = 4; (walls + 19)->yCoord = 7;
+  (walls + 20)->xCoord = 4; (walls + 20)->yCoord = 3;
+  (walls + 21)->xCoord = 4; (walls + 21)->yCoord = 1;
+  (walls + 22)->xCoord = 6; (walls + 22)->yCoord = 7;
+  (walls + 23)->xCoord = 6; (walls + 23)->yCoord = 5;
+  (walls + 24)->xCoord = 6; (walls + 24)->yCoord = 3;
+
+  // apisToDans();
 
 	for (i = 0; i < 16; i++) {
 		graph[i/4][i%4].current.x = i/4;
