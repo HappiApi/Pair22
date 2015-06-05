@@ -135,12 +135,6 @@ void correctPosition(int LorRwall) {
 
 void setSquareCenters()
 {
-	turnToDirection(LEFT_TURN);
-	correctPosition(LEFT);
-	turnToDirection(ABOUT_TURN);
-	set_origin();
-	resetDist();
-
 	int i, j;
 
 	for (i = 0; i < 240; i += 60) {
@@ -148,6 +142,15 @@ void setSquareCenters()
 			set_point(i, j);
 		}
 	}
+}
+
+void initialBoxCalibration()
+{
+	turnToDirection(LEFT_TURN);
+	correctPosition(LEFT);
+	turnToDirection(ABOUT_TURN);
+	set_origin();
+	resetDist();
 }
 
 void correctToStraight(int motorSpeed) {
