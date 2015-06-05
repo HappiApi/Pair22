@@ -491,7 +491,7 @@ int checkWalls()
 
 	if(bCoord.x == 0 && bCoord.y == 0 && count > 3)
 	{
-			correctPosition(LEFT);
+			correctPosition(RIGHT);
 			turnToDirection(LEFT_TURN);
 			return 1;
 	}
