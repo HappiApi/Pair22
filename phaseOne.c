@@ -4,7 +4,7 @@ Module Usage : Accepts bearings x, where 0 < x < 360 where 0 is aligned with the
 */
 #include <stdio.h>
 #include <math.h>
-#include "v1.h"
+#include "position.h"
 #include "picomms.h"
 #include "wallStruct.h"
 

@@ -7,9 +7,9 @@ knows left wall follow will finish, so take advantage of that
 #include <stdio.h>
 #include "picomms.h"
 #include <math.h>
-#include "v1.h"
-#include "turn.h"
-#include "routeThruWalls.h"
+#include "position.h"
+#include "phaseOne.h"
+#include "phaseTwo.h"
 
 #define INMIDDLEOFSQUARE
 #define STRAIGHT
