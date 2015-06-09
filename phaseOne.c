@@ -113,7 +113,7 @@ void correctPosition(int LorRwall) {
       calcPos();
     }
   } 
-  
+
   else {
     while (averageUS() < targetDistNorth - 2 || averageUS() > targetDistNorth + 2) {
       if (averageUS() < targetDistNorth - 2) 
@@ -168,7 +168,7 @@ void correctToStraight(int motorSpeed) {
 #define X 0
 #define Y 1
 
-int metTarget;
+int metTarget; // Not necessary ?
 
 void driveStraight(int XorY, int idealVal) {
 	int currentVal;
