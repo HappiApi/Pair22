@@ -19,7 +19,7 @@ Requirements : Have to be called every time going through loop
 // state machine - have modes, so turn left mode, then dead straight, then straight mode 
 // increnment counter when detecting walls (like data smoothing)
 
-#define RoboWidth 22.75
+#define RoboWidth 22.5
 #define CMPerEnc 9.55*M_PI/360 //9.55 in sim
 
 //11.925 mark uses width = 22.5 - 22.8

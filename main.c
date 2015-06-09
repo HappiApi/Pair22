@@ -24,7 +24,7 @@ int main()
 	connect_to_robot();
 	initialize_robot();
 	set_ir_angle(LEFT, -45); set_ir_angle(RIGHT, 45);
-	setSquareCenters();
+	//setSquareCenters();
 	initialBoxCalibration();
 	while(!state)
 	{

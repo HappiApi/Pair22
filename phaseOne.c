@@ -112,9 +112,7 @@ void correctPosition(int LorRwall) {
         set_motors(5,5);
       calcPos();
     }
-  } 
-
-  else {
+  } else {
     while (averageUS() < targetDistNorth - 2 || averageUS() > targetDistNorth + 2) {
       if (averageUS() < targetDistNorth - 2) 
         set_motors(-5,-5);
@@ -168,7 +166,7 @@ void correctToStraight(int motorSpeed) {
 #define X 0
 #define Y 1
 
-int metTarget; // Not necessary ?
+int metTarget;
 
 void driveStraight(int XorY, int idealVal) {
 	int currentVal;
@@ -205,17 +203,15 @@ void driveStraight(int XorY, int idealVal) {
 void Straight()
 {
 	adjustAngle();
-
+	// Going Up
 
 	int i;
 	
-	//Speeding up
 	for (i = 0; i < 11; i++) {
 		set_motors(3 * i, 3 * i);
 		usleep(70000);
 	}
 
-	// Going Up
 	if(currentDirection() == 0 || currentDirection() == 4) {
 		idealY += 60;
 		printf("UP TargetY: %f\n",idealY);
@@ -286,17 +282,17 @@ int getAverage(int *values, int length) {
 		} else {
 			printf("%i, ", *(values + i));
 			result += *(values + i);
-			errorCount++;	// should be called notErrorCount
+			errorCount++;
 		}
 	}
 
 
 	printf("\n");
 
-	if (errorCount != 0) {	// should be called notErrorCount
-		return result / errorCount;  // should be called notErrorCount
+	if (errorCount != 0) {
+		return result / errorCount;
 	} else {
-		return 0;	// 0 returned when all values are different to each other by more than accpetableRange
+		return 0;
 	}
 }
 
@@ -371,7 +367,7 @@ int averageUS() {
 int checkWalls()
 {
 	static int count = 0;
-	static int left,right,front;
+	int left,right,front;
 	left = checkWall(LEFT);
 	right = checkWall(RIGHT);
 	front = checkFrontWall();
@@ -391,6 +387,7 @@ int checkWalls()
 		if (left) north = 1;
 		if (right) south = 1;
 		if (front) east = 1;
+		if (front) printf("\n\n\nwall ahead!! east : %i, wall exists : %i\n\n\n", east, checkWallExists(bCoord.x * 2, bCoord.y * 2 + 1));
 	}
 	if(fabs(currentHeading()-(1.5*M_PI)) < 0.1) { //west
 		if (left) south = 1;
@@ -402,28 +399,28 @@ int checkWalls()
 		if (!checkWallExists(bCoord.x * 2 + 2, bCoord.y * 2 - 1)) {
 			Walls[count].horizontalNumber = bCoord.x * 2 + 2; Walls[count].verticalNumber = bCoord.y * 2 - 1; //left wall
 			count++;
-			set_point(60 * bCoord.x + 30, 60 * bCoord.y);
+			//set_point(60 * bCoord.x + 30, 60 * bCoord.y);
 		}
 	}
 	if (west) {
 		if (!checkWallExists(bCoord.x * 2, bCoord.y * 2 - 1)) {
 			Walls[count].horizontalNumber = bCoord.x * 2; Walls[count].verticalNumber = bCoord.y * 2 - 1; //left wall
 			count++;
-			set_point(60 * bCoord.x - 30, 60 * bCoord.y);
+			//set_point(60 * bCoord.x - 30, 60 * bCoord.y);
 		}
 	}
 	if (north) {
 		if (!checkWallExists(bCoord.x * 2 + 1, bCoord.y * 2)) {
 			Walls[count].horizontalNumber = bCoord.x * 2 + 1; Walls[count].verticalNumber = bCoord.y * 2; //left wall
 			count++;
-			set_point(60 * bCoord.x, 60 * bCoord.y + 30);
+			//set_point(60 * bCoord.x, 60 * bCoord.y + 30);
 		}
 	}
 	if (south) {
 		if (!checkWallExists(bCoord.x * 2 + 1, bCoord.y * 2 - 2)) {
 			Walls[count].horizontalNumber = bCoord.x * 2 + 1; Walls[count].verticalNumber = bCoord.y * 2 - 2; //left wall
 			count++;
-			set_point(60 * bCoord.x, 60 * bCoord.y - 30);
+			//set_point(60 * bCoord.x, 60 * bCoord.y - 30);
 		}
 	}
 	// 
@@ -495,7 +492,7 @@ int checkWalls()
 	if(bCoord.x == 0 && bCoord.y == 0 && count > 3)
 	{
 			correctPosition(RIGHT);
-			turnToDirection(LEFT_TURN);
+			turnToDirection(RIGHT_TURN);
 			return 1;
 	}
 	printf("bCoordX: %d bCoordY: %d\n",bCoord.x,bCoord.y );
