@@ -112,7 +112,9 @@ void correctPosition(int LorRwall) {
         set_motors(5,5);
       calcPos();
     }
-  } else {
+  } 
+  
+  else {
     while (averageUS() < targetDistNorth - 2 || averageUS() > targetDistNorth + 2) {
       if (averageUS() < targetDistNorth - 2) 
         set_motors(-5,-5);
@@ -203,15 +205,17 @@ void driveStraight(int XorY, int idealVal) {
 void Straight()
 {
 	adjustAngle();
-	// Going Up
+
 
 	int i;
 	
+	//Speeding up
 	for (i = 0; i < 11; i++) {
 		set_motors(3 * i, 3 * i);
 		usleep(70000);
 	}
 
+	// Going Up
 	if(currentDirection() == 0 || currentDirection() == 4) {
 		idealY += 60;
 		printf("UP TargetY: %f\n",idealY);
@@ -282,17 +286,17 @@ int getAverage(int *values, int length) {
 		} else {
 			printf("%i, ", *(values + i));
 			result += *(values + i);
-			errorCount++;
+			errorCount++;	// should be called notErrorCount
 		}
 	}
 
 
 	printf("\n");
 
-	if (errorCount != 0) {
-		return result / errorCount;
+	if (errorCount != 0) {	// should be called notErrorCount
+		return result / errorCount;  // should be called notErrorCount
 	} else {
-		return 0;
+		return 0;	// 0 returned when all values are different to each other by more than accpetableRange
 	}
 }
 
@@ -367,7 +371,7 @@ int averageUS() {
 int checkWalls()
 {
 	static int count = 0;
-	int left,right,front;
+	static int left,right,front;
 	left = checkWall(LEFT);
 	right = checkWall(RIGHT);
 	front = checkFrontWall();
@@ -387,7 +391,6 @@ int checkWalls()
 		if (left) north = 1;
 		if (right) south = 1;
 		if (front) east = 1;
-		if (front) printf("\n\n\nwall ahead!! east : %i, wall exists : %i\n\n\n", east, checkWallExists(bCoord.x * 2, bCoord.y * 2 + 1));
 	}
 	if(fabs(currentHeading()-(1.5*M_PI)) < 0.1) { //west
 		if (left) south = 1;
