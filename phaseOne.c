@@ -317,7 +317,7 @@ int checkFrontWall()
 	}
 	final = getAverage(distances, noOfChecks);
 
-	printf("Front wall Final: %i\n\n", final);
+	printf("Front wall Final: %i\n", final);
 
 	if(final <= 40)
 		return 1;	
@@ -410,14 +410,14 @@ int checkWalls()
 	// Case 1 LR
 	if(left && !front && right)
 	{
-		printf("CASE1 LR\n");
+		printf("CASE1 LR\n\n");
 		Straight();
 	}
 
 	// Case 2 LF
 	else if(left && front && !right)
 	{
-		printf("CASE2 LF\n");
+		printf("CASE2 LF\n\n");
 		correctPosition(LEFT);
 		turnToDirection(ABOUT_TURN);
 		Straight();
@@ -426,7 +426,7 @@ int checkWalls()
 	// Case 3 LFR
 	else if(left && front && right)
 	{
-		printf("CASE3 LFR\n");
+		printf("CASE3 LFR\n\n");
 		correctPosition(LEFT);
 		turnToDirection(LEFT_TURN);
 		Straight();
@@ -435,7 +435,7 @@ int checkWalls()
 	// Case 4 FR 
 	else if(!left && front && right)
 	{
-		printf("CASE4 FR\n");
+		printf("CASE4 FR\n\n");
 		correctPosition(RIGHT);
 		turnToDirection(ABOUT_TURN);
 		Straight();
@@ -444,14 +444,14 @@ int checkWalls()
 	// Case 5 L
 	else if(left && !front && !right)
 	{
-		printf("CASE5 L\n");
+		printf("CASE5 L\n\n");
 		Straight();
 	}
 
 	// Case 6 R
 	else if(!left && !front && right)
 	{
-		printf("CASE6 R\n");
+		printf("CASE6 R\n\n");
 		turnToDirection(LEFT_TURN);
 		Straight();
 	}
@@ -459,7 +459,7 @@ int checkWalls()
 	// Case 7 F
 	else if(!left && front && !right)
 	{
-		printf("CASE7 F\n");
+		printf("CASE7 F\n\n");
 		turnToDirection(LEFT_TURN);
 		Straight();
 	}
@@ -467,7 +467,7 @@ int checkWalls()
 	// Case 8 None
 	else if(!left && !front && !right)
 	{
-		printf("CASE8 NONE\n");
+		printf("CASE8 NONE\n\n");
 		turnToDirection(LEFT_TURN);
 		Straight();
 	}
