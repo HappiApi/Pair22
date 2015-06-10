@@ -7,7 +7,7 @@
 #include "wallStruct.h"
 
 #define FOLLOW_SPEED 40
-#define FOLLOW_BK_SPD 60
+#define FOLLOW_BK_SPD 120
 #define THRESHOLD_DIST 35.0
 #define MIN_TURN_RADIUS 25
 #define RIGHT_ANGLE_TICKS 210
@@ -21,6 +21,10 @@
 #define WEST 3
 #define ENC_TO_CM (9.55 * M_PI / 360)
 #define ROBOT_WIDTH 22.5   // In cm
+
+#define targetRadius 55
+#define avoidSpeedInc 70
+#define avoidDist 35
 
 typedef struct {
 	int xCoord;
@@ -247,7 +251,7 @@ double calcDistToPoint (path * temp) {
 /*finds the furthest coordinate ahead within a set radius (target) */
 path * findTarget () {
   path * temp = currentNode;
-  double target = 25;
+  double target = targetRadius;
   double distToNode, closestNodeDist = 1000.0;
   
     while(1) {
@@ -314,10 +318,31 @@ void followBack() {
       exit(0);
     }
     angleToTarget = angleToTargetPoint(target);
-    if (angleToTarget > 0) {
-      set_motors(FOLLOW_BK_SPD, (int)((1 - ratio * angleToTarget) * (float)FOLLOW_BK_SPD));
-    } else {
-      set_motors((int)((1.0 - (ratio * -angleToTarget)) * FOLLOW_BK_SPD), FOLLOW_BK_SPD);
+
+
+    if (angleToTarget > 0) 
+    {
+      if(get_front_ir_dist(LEFT) < avoidDist)
+      {
+        set_motors(FOLLOW_BK_SPD + avoidSpeedInc, (int)((1 - ratio * angleToTarget) * (float)FOLLOW_BK_SPD));
+      }
+      else if (get_front_ir_dist(RIGHT) < avoidDist)
+      {
+        set_motors(FOLLOW_BK_SPD, (int)((1 - ratio * angleToTarget) * (float)FOLLOW_BK_SPD) +avoidSpeedInc);
+      }
+      else{set_motors(FOLLOW_BK_SPD, (int)((1 - ratio * angleToTarget) * (float)FOLLOW_BK_SPD));}      
+    } 
+    else 
+    {
+      if(get_front_ir_dist(LEFT) < avoidDist)
+      {
+        set_motors(FOLLOW_BK_SPD + avoidSpeedInc, (int)((1 - ratio * angleToTarget) * (float)FOLLOW_BK_SPD));
+      }
+      else if (get_front_ir_dist(RIGHT) < avoidDist)
+      {
+        set_motors(FOLLOW_BK_SPD, (int)((1 - ratio * angleToTarget) * (float)FOLLOW_BK_SPD) +avoidSpeedInc);
+      }
+      else {set_motors((int)((1.0 - (ratio * -angleToTarget)) * FOLLOW_BK_SPD), FOLLOW_BK_SPD);}
     }
 
     calcPosition();
