@@ -30,6 +30,17 @@ Module Usage : Accepts bearings x, where 0 < x < 360 where 0 is aligned with the
 #define LEFT_TURN -1
 #define RIGHT_TURN 1
 #define ABOUT_TURN 2
+
+#define X 0
+#define Y 1
+
+#define correctNorth 22 //CHANGE TO 27 IN RACE
+#define correctSide 22 //CHANGE TO 27 IN RACE
+
+#define straightCorrectDistance 15
+#define straightCorrectSpeedDifference 10
+
+
 /*
 	Slow down when reach
 
@@ -55,7 +66,6 @@ void initializeWalls()
 	{
 		Walls[i].horizontalNumber = 0;
 		Walls[i].verticalNumber = 0;
-		Walls[i].state = 2; 
 	}
 }
 
@@ -93,14 +103,14 @@ void turnToDirection(int turnDirection) {
 }
 
 void correctPosition(int LorRwall) {  
-  int targetDistNorth = 27;
-  int targetDistSide = 27; //22
+  int targetDistNorth = correctNorth;
+  int targetDistSide = correctSide; //22
 
   if (LorRwall == LEFT) {
     while (averageUS() < targetDistNorth - 2 || averageUS() > targetDistNorth + 2) {
       if (averageUS() < targetDistNorth - 2) 
         set_motors(-5,-5);
-      else
+  		else
         set_motors(5,5);
       calcPos();
     }
@@ -112,7 +122,9 @@ void correctPosition(int LorRwall) {
         set_motors(5,5);
       calcPos();
     }
-  } else {
+  } 
+
+  else {
     while (averageUS() < targetDistNorth - 2 || averageUS() > targetDistNorth + 2) {
       if (averageUS() < targetDistNorth - 2) 
         set_motors(-5,-5);
@@ -129,19 +141,9 @@ void correctPosition(int LorRwall) {
       calcPos();
     }
   }
-  idealX = currentX();
-  idealY = currentY();
-}
 
-void setSquareCenters()
-{
-	int i, j;
-
-	for (i = 0; i < 240; i += 60) {
-		for (j = 60; j < 300; j += 60) {
-			set_point(i, j);
-		}
-	}
+  // idealX = currentX();
+  // idealY = cußrrentY();
 }
 
 void initialBoxCalibration()
@@ -154,23 +156,18 @@ void initialBoxCalibration()
 }
 
 void correctToStraight(int motorSpeed) {
-	if (get_side_ir_dist(LEFT) < 10) {
-		set_motors(motorSpeed + 3, motorSpeed);
-	} else if (get_side_ir_dist(RIGHT) < 10) {
-		set_motors(motorSpeed, motorSpeed + 3);
+	if (get_front_ir_dist(LEFT) < straightCorrectDistance) {
+		set_motors(motorSpeed + straightCorrectSpeedDifference, motorSpeed);
+	} else if (get_front_ir_dist(RIGHT) < straightCorrectSpeedDifference) {
+		set_motors(motorSpeed, motorSpeed + straightCorrectSpeedDifference);
 	} else {
 		set_motors(motorSpeed, motorSpeed);
 	}
 }
 
-#define X 0
-#define Y 1
-
-int metTarget;
 
 void driveStraight(int XorY, int idealVal) {
 	int currentVal;
-	metTarget = 1;
 
 	if (XorY == X) 
 		currentVal = currentX();
@@ -178,7 +175,7 @@ void driveStraight(int XorY, int idealVal) {
 		currentVal = currentY();
 
 	while(fabs(currentVal-idealVal) > 1) {
-		if(fabs(currentVal-idealVal) < 15) {
+		if(fabs(currentVal-idealVal) < 50) {
 				correctToStraight(3 * fabs(currentVal-idealVal));
 		} else {
 			set_motors(60,60);
@@ -187,15 +184,9 @@ void driveStraight(int XorY, int idealVal) {
 
 		if (XorY == X) {
 			currentVal = currentX();
-			// idealX = currentVal;
 		} else {
 			currentVal = currentY();
-			// idealY = currentVal;
 		}
-		// if (averageUS() < 25) {
-		// 	metTarget = 0;
-		// 	break;
-		// }
 	}
 	set_motors(0,0);
 }
@@ -203,22 +194,22 @@ void driveStraight(int XorY, int idealVal) {
 void Straight()
 {
 	adjustAngle();
-	// Going Up
+
 
 	int i;
 	
+	//Speed up
 	for (i = 0; i < 11; i++) {
 		set_motors(3 * i, 3 * i);
 		usleep(70000);
 	}
 
+	// Going Up
 	if(currentDirection() == 0 || currentDirection() == 4) {
 		idealY += 60;
 		printf("UP TargetY: %f\n",idealY);
 		driveStraight(Y, idealY);
-		if (metTarget == 1) {
-			bCoord.y += 1;
-		}
+		bCoord.y += 1;
 	}
 
 	// Going Down
@@ -226,9 +217,7 @@ void Straight()
 		idealY -= 60;
 		printf("DOWN TargetY: %f\n",idealY);
 		driveStraight(Y, idealY);
-		if (metTarget == 1) {
-			bCoord.y -= 1;
-		}
+		bCoord.y -= 1;
 	}
 
 	// Going Right
@@ -236,9 +225,7 @@ void Straight()
 		idealX += 60;
 		printf("RIGHT TargetX: %f\n",idealX);
 		driveStraight(X, idealX);
-		if (metTarget == 1) {
-			bCoord.x += 1;
-		}
+		bCoord.x += 1;
 	}
 
 	// Going Left
@@ -246,9 +233,7 @@ void Straight()
 		idealX -= 60;
 		printf("LEFT TargetX: %f\n",idealX);
 		driveStraight(X, idealX);
-		if (metTarget == 1) {
-			bCoord.x -= 1;
-		}
+		bCoord.x -= 1;
 	}
 
 	set_motors(0,0);
@@ -280,14 +265,14 @@ int getAverage(int *values, int length) {
 		if (i == outliers[count]) {
 			count++;
 		} else {
-			printf("%i, ", *(values + i));
+			// printf("%i, ", *(values + i));
 			result += *(values + i);
 			errorCount++;
 		}
 	}
 
 
-	printf("\n");
+	// printf("\n");
 
 	if (errorCount != 0) {
 		return result / errorCount;
@@ -307,12 +292,12 @@ int checkWall(int LorR)
 		distancesFront[i] = get_front_ir_dist(LorR);
 		usleep(10000);
 	}
-	printf("front ir: %i", getAverage(distancesFront, noOfChecks));
+	// printf("front ir: %i", getAverage(distancesFront, noOfChecks));
 	final = (getAverage(distancesSide, noOfChecks) + get_front_ir_dist(LorR)) / 2; //getAverage(distancesFront, noOfChecks)) / 2;
 	if (LorR == LEFT) {
-		printf("\nLeft");
+		printf("Left");
 	} else {
-		printf("\nRight");
+		printf("Right");
 	}
 	printf(" wall Dist : %i\n", final);
 	if(final <= 40) // tighter bound ?? e.g 21
@@ -332,7 +317,7 @@ int checkFrontWall()
 	}
 	final = getAverage(distances, noOfChecks);
 
-	printf("\n\nFinal: %i\n", final);
+	printf("Front wall Final: %i\n\n", final);
 
 	if(final <= 40)
 		return 1;	
@@ -360,7 +345,6 @@ int averageUS() {
 	}
 
 	average = getAverage(values, noOfChecks);
-	printf("average US dist: %i\n", average);
 	return average;
 }
 
@@ -387,7 +371,6 @@ int checkWalls()
 		if (left) north = 1;
 		if (right) south = 1;
 		if (front) east = 1;
-		if (front) printf("\n\n\nwall ahead!! east : %i, wall exists : %i\n\n\n", east, checkWallExists(bCoord.x * 2, bCoord.y * 2 + 1));
 	}
 	if(fabs(currentHeading()-(1.5*M_PI)) < 0.1) { //west
 		if (left) south = 1;
